@@ -21,14 +21,4 @@ model Vehicle {
   color       String
   price       Float
   isAvailable Boolean
-  Order       Order[]
-}
-
-model Order {
-  id        String @id
-  vehicleId String
-  userId    String
-  status    String
-
-  vehicle Vehicle @relation(fields: [vehicleId], references: [id])
 }
