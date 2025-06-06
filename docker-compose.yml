@@ -1,0 +1,33 @@
+version: "3.8"
+services:
+  phase4:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - postgres_phase4
+    networks:
+      - microservices-network
+
+  postgres_phase4:
+    image: postgres:13
+    env_file:
+      - .env
+    volumes:
+      - postgres-phase4-data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - microservices-network
+
+networks:
+  microservices-network:
+    external: true
+
+volumes:
+  postgres-phase4-data:
+    driver: local

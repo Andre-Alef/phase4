@@ -21,7 +21,7 @@ interface IUpdateVehicle {
   price?: number;
   isAvailable?: boolean;
 }
-const URL = "http://vehicle:3001";
+const URL = process.env.VEHICLE_API_URL;
 export class VehicleService {
   constructor(
     readonly vehicleRepository: IVehicleRepository,
@@ -47,6 +47,7 @@ export class VehicleService {
     const created = await this.vehicleRepository.save(vehicle);
 
     try {
+      console.log({ URL });
       const response = await axios.post<ICreateVehicle>(`${URL}/vehicles`, {
         id: created.id,
         brand: created.brand,
@@ -58,7 +59,9 @@ export class VehicleService {
       });
       console.log("Veículo criado com sucesso:", response.data);
     } catch (error) {
+      await this.vehicleRepository.delete(created.id);
       console.error("Erro ao criar veículo:", error);
+      throw new Error("Erro ao criar veículo:");
     }
     return created;
   }
@@ -72,16 +75,25 @@ export class VehicleService {
     price,
     isAvailable,
   }: IUpdateVehicle): Promise<Vehicle> {
-    const vehicle: Vehicle = await this.get(id);
+    const vehicleOld: Vehicle = await this.get(id);
 
-    vehicle.brand = brand;
-    vehicle.model = model;
-    vehicle.year = year;
-    vehicle.color = color;
-    vehicle.price = price;
-    vehicle.isAvailable = isAvailable;
+    const vehicleToUpdate = this.vehicleFactory.create({
+      id: vehicleOld.id,
+      brand: vehicleOld.brand,
+      model: vehicleOld.model,
+      year: vehicleOld.year,
+      color: vehicleOld.color,
+      price: vehicleOld.price,
+      isAvailable: vehicleOld.isAvailable,
+    });
+    vehicleToUpdate.brand = brand;
+    vehicleToUpdate.model = model;
+    vehicleToUpdate.year = year;
+    vehicleToUpdate.color = color;
+    vehicleToUpdate.price = price;
+    vehicleToUpdate.isAvailable = isAvailable;
 
-    const updatedVehicle = await this.vehicleRepository.save(vehicle);
+    const updatedVehicle = await this.vehicleRepository.save(vehicleToUpdate);
     try {
       const response = await axios.patch<IUpdateVehicle>(`${URL}/vehicles`, {
         id: updatedVehicle.id,
@@ -94,7 +106,9 @@ export class VehicleService {
       });
       console.log("Veículo criado com sucesso:", response.data);
     } catch (error) {
-      console.error("Erro ao criar veículo:", error);
+      await this.vehicleRepository.save(vehicleOld);
+      console.error("Erro ao atualizar veículo:", error);
+      throw new Error("Erro ao atualizar veículo");
     }
     return updatedVehicle;
   }

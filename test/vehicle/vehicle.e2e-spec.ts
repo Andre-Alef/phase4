@@ -1,3 +1,4 @@
+import axios from "axios";
 import request from "supertest";
 import express from "express";
 import { vehicleController } from "../../src/vehicle/controller";
@@ -5,10 +6,13 @@ import { vehicleController } from "../../src/vehicle/controller";
 const app = express();
 app.use(express.json());
 app.use("/vehicles", vehicleController);
-
+jest.mock("axios");
 describe("Vehicle Controller Endpoints", () => {
   let vehicleId: string;
+  const mockedAxios = axios as jest.Mocked<typeof axios>;
 
+  mockedAxios.post.mockResolvedValueOnce({ status: 201 });
+  mockedAxios.patch.mockResolvedValueOnce({ status: 201 });
   it("should create a new vehicle", async () => {
     const newVehicle = {
       brand: "Toyota",
