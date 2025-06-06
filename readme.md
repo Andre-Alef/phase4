@@ -53,3 +53,5 @@ curl --location --request PATCH 'http://localhost:3000/vehicles' \
 "price": 16,
 "isAvailable": true
 }'
+
+demo
