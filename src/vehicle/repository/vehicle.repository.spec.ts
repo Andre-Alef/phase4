@@ -9,8 +9,8 @@ describe("VehicleRepository", () => {
     vehicleRepository = new VehicleRepository();
   });
 
-  describe("Método save", () => {
-    it("deve salvar um veículo", async () => {
+  describe("Save", () => {
+    it("Should save a vehicle", async () => {
       const vehicleData = new Vehicle({
         id: "1",
         brand: "Toyota",
@@ -36,8 +36,8 @@ describe("VehicleRepository", () => {
     });
   });
 
-  describe("Método get", () => {
-    it("deve obter um veículo por ID", async () => {
+  describe("get", () => {
+    it("Should get a vehicle by id", async () => {
       const vehicle = new Vehicle({
         id: "1",
         brand: "Toyota",
@@ -60,7 +60,7 @@ describe("VehicleRepository", () => {
       );
     });
 
-    it("deve lançar erro se o veículo não for encontrado", async () => {
+    it("Should throw error if vehicle is not found", async () => {
       prismaMock.vehicle.findUnique.mockResolvedValue(null);
 
       await expect(vehicleRepository.get("non-existent-id")).rejects.toThrow(

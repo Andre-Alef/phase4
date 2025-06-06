@@ -12,11 +12,13 @@ const mockedAxios = axios as jest.Mocked<typeof axios>;
 const mockVehicleRepository: jest.Mocked<IVehicleRepository> = {
   save: jest.fn(),
   get: jest.fn(),
+  delete: jest.fn(),
 };
 
 describe("VehicleService", () => {
   let vehicleService: VehicleService;
   let vehicleFactory: VehicleFactory;
+  const URL = process.env.VEHICLE_API_URL;
 
   beforeEach(() => {
     vehicleFactory = new VehicleFactory();
@@ -49,7 +51,7 @@ describe("VehicleService", () => {
         expect.any(Vehicle)
       );
       expect(mockedAxios.post).toHaveBeenCalledWith(
-        "http://vehicle:3001/vehicles",
+        `${URL}/vehicles`,
         expect.objectContaining(vehicleData)
       );
     });
@@ -68,11 +70,10 @@ describe("VehicleService", () => {
       mockVehicleRepository.save.mockResolvedValue(createdVehicle);
       mockedAxios.post.mockRejectedValue(new Error("Network Error"));
 
-      const result = await vehicleService.create(vehicleData);
+      await expect(vehicleService.create(vehicleData)).rejects.toThrow(Error);
 
-      expect(result).toBe(createdVehicle);
       expect(mockedAxios.post).toHaveBeenCalledWith(
-        "http://vehicle:3001/vehicles",
+        `${URL}/vehicles`,
         expect.objectContaining(vehicleData)
       );
     });
@@ -110,7 +111,7 @@ describe("VehicleService", () => {
         expect.objectContaining(updatedData)
       );
       expect(mockedAxios.patch).toHaveBeenCalledWith(
-        "http://vehicle:3001/vehicles",
+        `${URL}/vehicles`,
         expect.objectContaining(updatedData)
       );
     });

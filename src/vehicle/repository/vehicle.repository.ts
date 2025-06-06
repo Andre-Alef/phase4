@@ -3,10 +3,11 @@ import { PrismaClient, Vehicle as VehiclePrisma } from "@prisma/client";
 export interface IVehicleRepository {
   save(vehicle: Vehicle): Promise<Vehicle>;
   get(id: string): Promise<Vehicle>;
+  delete(id: string): Promise<void>;
 }
 
 export class VehicleRepository implements IVehicleRepository {
-  constructor(readonly prisma = new PrismaClient()) {} //TODO: make it global
+  constructor(readonly prisma = new PrismaClient()) {}
   async save({
     id,
     brand,
@@ -63,6 +64,12 @@ export class VehicleRepository implements IVehicleRepository {
       color: vehicle.color,
       price: vehicle.price,
       isAvailable: vehicle.isAvailable,
+    });
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.prisma.vehicle.delete({
+      where: { id },
     });
   }
 }
