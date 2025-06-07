@@ -36,10 +36,6 @@ curl --location 'http://localhost:3000/vehicles' \
 "isAvailable": true
 }'
 
-# Listar veiculos
-
-curl --location 'http://localhost:3000/vehicles?isAvailable=true'
-
 # Atualizar veiculo
 
 curl --location --request PATCH 'http://localhost:3000/vehicles' \
@@ -54,4 +50,10 @@ curl --location --request PATCH 'http://localhost:3000/vehicles' \
 "isAvailable": true
 }'
 
-demo
+## Coverage
+
+![Coverage](image.png)
+
+## Arquitetura
+
+![Arquitetura](image-1.png)
